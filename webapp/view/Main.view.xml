@@ -1,0 +1,151 @@
+<mvc:View controllerName="tech.taxera.app.ecompliance.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout"
+    xmlns:st="sap.ui.comp.smarttable"
+    xmlns:sfb="sap.ui.comp.smartfilterbar"
+    xmlns:sv="sap.ui.comp.smartvariants"
+    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+     <f:DynamicPage id="dynamicPageId" headerExpanded="{view>/extractionList/headerExpanded}" busyIndicatorDelay="{view>/busyIndicatorDelay}">
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <sv:SmartVariantManagement id="__SVM01" persistencyKey="tech.taxera.saft.app.saft.elsmvm" showShare="true" showExecuteOnSelection="true" entitySet="Extraction"/>
+                </f:heading>
+                <f:snappedContent>
+                    <Text id="statusText"></Text>
+                </f:snappedContent>
+
+                <f:actions>
+                    <Button text="{i18n>Create}" icon="sap-icon://add" type="Emphasized" press="onExtractionCreate"/>
+                </f:actions>
+
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- DynamicPage Header -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <f:content>
+                    <sfb:SmartFilterBar id="smartFilterBar" liveMode="true" smartVariant="__SVM01" useToolbar="false" entitySet="Extraction" persistencyKey="tech.taxera.saft.app.saft.elsmvm" assignedFiltersChanged="onAssignedFiltersChanged" enableBasicSearch="true" basicSearchFieldName="Country">
+                        <sfb:controlConfiguration>
+                            <sfb:ControlConfiguration key="Country" visibleInAdvancedArea="true">
+                            </sfb:ControlConfiguration>
+                            <sfb:ControlConfiguration key="CompanyCode" visibleInAdvancedArea="true">
+                            </sfb:ControlConfiguration>
+                            <sfb:ControlConfiguration key="ConvCreatedAt" label="{i18n>extractionList.CreatedAt}" conditionType="{
+						module: 'sap.ui.comp.config.condition.DateRangeType',
+						ignoreTime: false
+					}" visibleInAdvancedArea="true">
+                            </sfb:ControlConfiguration>
+                        </sfb:controlConfiguration>
+
+                        <!-- layout data used to make the table growing but the filter bar fixed -->
+                        <sfb:layoutData>
+                            <FlexItemData shrinkFactor="0"/>
+                        </sfb:layoutData>
+
+                    </sfb:SmartFilterBar>
+
+                </f:content>
+            </f:DynamicPageHeader>
+        </f:header>
+        <f:content>
+            <st:SmartTable id="extractionsTable" 
+            placeToolbarInTable="true"
+            smartVariant="__SVM01" beforeRebindTable="onBeforeRebindTable" persistencyKey="tech.taxera.saft.app.saft.elsmvm" entitySet="Extraction" smartFilterId="smartFilterBar" tableType="ResponsiveTable" useExportToExcel="true" useVariantManagement="true" enableAutoBinding="true" requestAtLeastFields="Id,CountryName,CompanyCode,FromDate,ToDate,CreatedBy,ConvCreatedAt,Status,StatusText,SubmissionId,to_Attachments,to_DataPreparation,to_XmlReconciliation" useTablePersonalisation="true" showRowCount="true">
+                <st:layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%"/>
+                </st:layoutData>
+                <st:customToolbar>
+                    <OverflowToolbar design="Transparent">
+                        <ToolbarSpacer/>
+                        <OverflowToolbarToggleButton tooltip="Edit" text="Edit" icon="sap-icon://edit" pressed="{view>/extractionList/bEditMode}"/>
+                        <OverflowToolbarButton icon="sap-icon://delete" tooltip="Delete" press="onDeleteExtraction" enabled="{= ${view>/extractionList/bEditMode} &amp;&amp; ${view>/extractionList/bDeleteEnabled} }"/>
+                    </OverflowToolbar>
+                </st:customToolbar>
+                <Table id="extractsTable" sticky="ColumnHeaders,HeaderToolbar" mode="{= ${view>/extractionList/bEditMode} ? 'SingleSelectLeft' : 'None'}" selectionChange="onSelectExtraction" growing="true" growingScrollToLoad="true" growingThreshold="100">
+                
+                    <columns>
+                        <Column>
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "CountryName","columnIndex":"0", "leadingProperty": "CountryName", "filterProperty": "CountryName", "sortProperty": "CountryName", "type": "string"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.Country}"/>
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "CompanyCode","columnIndex":"1", "leadingProperty": "CompanyCode", "filterProperty": "CompanyCode", "sortProperty": "CompanyCode", "type": "string"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.CompanyCode}"/>
+                        </Column>
+
+                        <Column demandPopin="true" minScreenWidth="Tablet">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "FromDate","columnIndex":"2", "leadingProperty": "FromDate", "filterProperty": "FromDate", "sortProperty": "FromDate", "type": "date"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.FromDate}"/>
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "ToDate","columnIndex":"3", "leadingProperty": "ToDate", "filterProperty": "ToDate", "sortProperty": "ToDate", "type": "date"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.ToDate}"/>
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "CreatedByName","columnIndex":"4", "leadingProperty": "CreatedByName", "filterProperty": "CreatedByName", "sortProperty": "CreatedByName", "type": "string"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.CreatedBy}"/>
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "ConvCreatedAt","columnIndex":"5", "leadingProperty": "ConvCreatedAt", "filterProperty": "ConvCreatedAt", "sortProperty": "ConvCreatedAt", "type": "date"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.CreatedAt}"/>
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Desktop">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "Status","columnIndex":"6", "leadingProperty": "Status", "filterProperty": "Status", "sortProperty": "Status", "type": "string"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.Status}"/>
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Desktop">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "SubmissionId","columnIndex":"7"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.SubmissionId}"/>
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Desktop">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "Actions","columnIndex":"8"}'/>
+                            </customData>
+                            <Text text="{i18n>extractionList.Actions}"/>
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem type="Navigation" press="onExtractionPress">
+                            <cells>
+                                <Text text="{CountryName}"/>
+                                <Text text="{CompanyCode}"/>
+                                <Text text="{path: 'FromDate', type: '.types.TaxeraDateType'}"/>
+                                <Text text="{path: 'ToDate', type: '.types.TaxeraDateType'}"/>
+                                <Text text="{CreatedByName}"/>
+                                <Text text="{path: 'ConvCreatedAt', type: '.types.TaxeraDateTimeType'}"/>
+                                <ObjectStatus inverted="false" text="{StatusText}" icon="{path: 'Status', formatter: '.formatter.formatStatusIcon' }" state="{path: 'Status', formatter: '.formatter.formatStatusColor' }"/>
+                                <Text text="{path: 'SubmissionId'}"/>
+                                <HBox>
+                                    <Button class="sapUiTinyMarginEnd" enabled="{ path: 'to_Attachments', formatter: '.downloadEnabledFormatter' }" type="Emphasized" icon="sap-icon://download" tooltip="{i18n>extractionList.DownloadForm}" press="onDownloadForm"/>
+                                    <Button class="sapUiTinyMarginEnd" enabled="{ path: 'to_DataPreparation', formatter: '.reconciliateEnabledFormatter' }" type="Emphasized" icon="sap-icon://approvals" tooltip="{i18n>extractionList.Recon1}" press="onShowRecon1"/>
+                                    <Button class="sapUiTinyMarginEnd" enabled="{ path: 'to_XmlReconciliation', formatter: '.validateEnabledFormatter' }" type="Emphasized" icon="sap-icon://validate" tooltip="{i18n>extractionList.Recon2}" press="onShowRecon2"/>
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </st:SmartTable>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>
